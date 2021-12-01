@@ -10,9 +10,11 @@
     "@mui/material": "latest",
     "gatsby": "latest",
     "gatsby-plugin-react-helmet": "latest",
+    "path-browserify": "^1.0.1",
     "react": "latest",
     "react-dom": "latest",
-    "react-helmet": "latest"
+    "react-helmet": "latest",
+    "react-image-annotate": "^1.8.0"
   },
   "scripts": {
     "develop": "gatsby develop",
