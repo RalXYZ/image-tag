@@ -14,16 +14,19 @@ import Container from '@mui/material/Container';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../theme';
 import Copyright from '../components/copyright';
+import config from '../config';
+import { navigate } from "gatsby";
 
 export default function Register() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    fetch(`${config.urlHost}/user`, {
+      method: 'POST',
+      body: data,
+    })
+    .then(response => navigate("/"))
+    .catch(error => console.error(error));
   };
 
   return (

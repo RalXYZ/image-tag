@@ -12,11 +12,21 @@ import (
 	"net/http"
 )
 
+func getLoginStatus(c *gin.Context) {
+	if username := c.GetString("username"); username != "" {
+        c.String(http.StatusOK, username)
+    } else {
+        c.String(http.StatusNotFound, "")
+    }
+}
+
 func register(c *gin.Context) {
-	username, ok1 := c.GetPostForm("username")
-	password, ok2 := c.GetPostForm("password")
-	email, ok3 := c.GetPostForm("email")
-	if !(ok1 && ok2 && ok3) {
+	name := c.PostForm("name")
+	username := c.PostForm("username")
+	password := c.PostForm("password")
+	email := c.PostForm("email")
+
+	if !(username != "" && password != "" && email != "" && name != "") {
 		c.String(http.StatusBadRequest, error.RequiredFieldMissing)
 		return
 	}
@@ -27,6 +37,7 @@ func register(c *gin.Context) {
 		return
 	}
 	if model.DB.Create(&model.User {
+		Name: name,
 		Username: username,
 		Password: passwordHashed,
 		Email: email,
@@ -40,16 +51,16 @@ func register(c *gin.Context) {
 }
 
 func login(c *gin.Context) {
-	username, ok1 := c.GetPostForm("username")
-	password, ok2 := c.GetPostForm("password")
+	username := c.PostForm("username")
+	password := c.PostForm("password")
 
-	if !(ok1 && ok2) {
+	if !(username != "" && password != "") {
 		c.String(http.StatusBadRequest, error.RequiredFieldMissing)
 		return
 	}
 
-	user := model.User{}
-	if model.DB.First(&user, username).Error == gorm.ErrRecordNotFound {
+	user := model.User{Username: username}
+	if model.DB.First(&user).Error == gorm.ErrRecordNotFound {
 		c.String(http.StatusNotFound, error.UserNotFound)
 		return
 	}

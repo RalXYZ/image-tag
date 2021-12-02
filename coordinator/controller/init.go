@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -13,6 +14,12 @@ func InitWebFramework() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	r = gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"POST", "GET"},
+	}))
+
 	addRouter()
 
 	log.Info("gin framework initialized")
