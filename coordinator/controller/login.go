@@ -26,7 +26,7 @@ func register(c *gin.Context) {
 	password := c.PostForm("password")
 	email := c.PostForm("email")
 
-	if !(username != "" && password != "" && email != "" && name != "") {
+	if username == "" || password == "" || email == "" || name == "" {
 		c.String(http.StatusBadRequest, error.RequiredFieldMissing)
 		return
 	}
@@ -54,7 +54,7 @@ func login(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
-	if !(username != "" && password != "") {
+	if username == "" || password == "" {
 		c.String(http.StatusBadRequest, error.RequiredFieldMissing)
 		return
 	}
