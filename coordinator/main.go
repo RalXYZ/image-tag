@@ -9,6 +9,7 @@ import (
 func main() {
 	conf.Init()
 	model.Init()
+	model.ConnectObjectStorage()
 	controller.InitWebFramework()
 	controller.StartServer()
 }
