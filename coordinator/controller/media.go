@@ -8,6 +8,7 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -18,22 +19,25 @@ type PresignedPost struct {
 }
 
 func createMedia(c *gin.Context) {
-	name := c.PostForm("name")
-	if name == "" {
-		c.String(http.StatusBadRequest, error.RequiredFieldMissing)
+	requestID := c.PostForm("requestId")
+
+	requestIDInt, err := strconv.ParseUint(requestID, 10, 64)
+	if err != nil {
+		logrus.Error(err)
+		c.String(http.StatusBadRequest, error.InvalidRequestArgument)
 		return
-    }
+	}
 
 	policy := minio.NewPostPolicy()
 	uuid, err := uuid.NewV4()
 	if err != nil {
-        logrus.Error(err)
-        c.String(http.StatusInternalServerError, error.InternalServerError)
-        return
-    }
+		logrus.Error(err)
+		c.String(http.StatusInternalServerError, error.InternalServerError)
+		return
+	}
 	_ = policy.SetBucket(model.BucketName)
 	_ = policy.SetKey(uuid.String())
-	_ = policy.SetExpires(time.Now().UTC().Add(time.Minute * 15))
+	_ = policy.SetExpires(time.Now().UTC().Add(time.Hour))
 	_ = policy.SetContentLengthRange(0, 10*1024*1024) // up to 10 MiB
 	url, formData, err := model.MC.PresignedPostPolicy(c, policy)
 	if err != nil {
@@ -41,18 +45,18 @@ func createMedia(c *gin.Context) {
 		return
 	}
 	result := model.DB.Create(&model.Media{
-		UUID: uuid,
-		Name: name,
+		RequestID:  requestIDInt,
+		UUID:       uuid,
 		UploaderID: c.GetString("username"),
 	})
 
 	if result.Error != nil {
-		logrus.Error(err)
+		logrus.Error(result.Error)
 		c.String(http.StatusInternalServerError, error.InternalServerError)
 		return
 	}
 
-	c.JSON(http.StatusOK, & PresignedPost{
+	c.JSON(http.StatusOK, &PresignedPost{
 		Url:    url.String(),
 		Policy: formData,
 		UUID:   uuid.String(),
