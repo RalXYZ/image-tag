@@ -7,7 +7,6 @@ import List from "@mui/material/List";
 import IconButton from "@mui/material/IconButton";
 import { styled } from "@mui/material/styles";
 import { mainListItems, secondaryListItems } from "../components/listItems";
-import { PinDropSharp } from "@mui/icons-material";
 
 const drawerWidth: number = 240;
 
@@ -56,7 +55,7 @@ const Sidebar: React.FC<{
       >
         <IconButton
           onClick={() => {
-            props.setOpen(!open);
+            props.setOpen(!props.open);
           }}
         >
           <ChevronLeftIcon />
