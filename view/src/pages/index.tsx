@@ -17,7 +17,7 @@ function DashboardContent() {
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <TopBar open={open} setOpen={setOpen}/>
+        <TopBar open={open} setOpen={setOpen} title="Dashboard"/>
         <Sidebar open={open} setOpen={setOpen}/>
         <Box
           component="main"

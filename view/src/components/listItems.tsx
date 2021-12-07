@@ -11,16 +11,17 @@ import LayersIcon from '@mui/icons-material/Layers';
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned';
 import PermMediaIcon from '@mui/icons-material/PermMedia';
+import { navigate } from "gatsby";
 
 export const mainListItems = (
   <div>
-    <ListItem button>
+    <ListItem button onClick={() => navigate("/")}>
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItem>
-    <ListItem button>
+    <ListItem button onClick={() => navigate("/upload")}>
       <ListItemIcon>
         <CloudUploadIcon />
       </ListItemIcon>

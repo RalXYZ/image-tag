@@ -37,9 +37,11 @@ const AppBar = styled(MuiAppBar, {
 const TopBar: React.FC<{
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  title: string;
 }> = (props: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  title: string;
 }) => {
   return (
     <AppBar position="absolute" open={props.open}>
@@ -69,7 +71,7 @@ const TopBar: React.FC<{
           noWrap
           sx={{ flexGrow: 1 }}
         >
-          Dashboard
+          {props.title}
         </Typography>
         <IconButton color="inherit">
           <Badge badgeContent={4} color="secondary">
