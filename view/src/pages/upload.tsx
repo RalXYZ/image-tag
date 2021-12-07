@@ -69,53 +69,74 @@ const Upload: React.FC = () => {
     console.log(name);
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     console.log(files);
-    const formData = new FormData();
-    formData.append("name", name);
-    fetch(`${config.urlHost}/request`, {
+    const createRequestFormData = new FormData();
+    createRequestFormData.append("name", name);
+    const res = await fetch(`${config.urlHost}/request`, {
       credentials: "include",
       method: "POST",
-      body: formData,
+      body: createRequestFormData,
     })
-      .then((res) => {
-        if (res.status / 100 !== 2) {
-          throw new Error("Filed to create annotation request");
-        }
-        res.text().then((text) => {
-          const requestId = text;
-          const formData = new FormData();
-          formData.append("requestId", requestId);
-          Promise.all(
-            files.map((file) => {
-              return fetch(`${config.urlHost}/media`, {
-                credentials: "include",
-                method: "POST",
-                body: formData,
-              });
-            })
-          ).then((res) => {
-            Promise.all(
-              res.map((r, i) => {
-                r.json().then((json) => {
-                  const formData = new FormData();
-                  formData.append("bucket", json.bucket);
-                  formData.append("key", json.key);
-                  formData.append("policy", json.policy);
-                  formData.append("x-amz-algorithm", json.x_amz_algorithm);
-                  formData.append("x-amz-credential", json.x_amz_credential);
-                  formData.append("x-amz-date", json.x_amz_date);
-                  formData.append("x-amz-signature", json.x_amz_signature);
-                  formData.append("file", files[i]);
-                });
-              })
-            );
-          });
+
+    const requestId = await res.text();
+    const presignedReqFormData = new FormData();
+    presignedReqFormData.append("requestId", requestId);
+
+    const presignedRes = await Promise.all(
+      files.map(() => {
+        return fetch(`${config.urlHost}/media`, {
+          credentials: "include",
+          method: "POST",
+          body: presignedReqFormData,
         });
       })
-      .catch((err) => {
-        console.log(err);
-      });
+    );
+
+    console.log(presignedRes);
+
+    const presignedResJson = await Promise.all(presignedRes.map((res) => res.json()));
+
+    const minioRes = await Promise.all(
+      presignedResJson.map((json, i) => {
+        const formData = new FormData();
+        formData.append("bucket", json.policy.bucket);
+        formData.append("key", json.policy.key);
+        formData.append("policy", json.policy.policy);
+        formData.append("x-amz-algorithm", json.policy["x-amz-algorithm"]);
+        formData.append("x-amz-credential", json.policy["x-amz-credential"]);
+        formData.append("x-amz-date", json.policy["x-amz-date"]);
+        formData.append("x-amz-signature", json.policy["x-amz-signature"]);
+        formData.append("file", files[i]);
+        return fetch(json.url, {
+          method: "POST",
+          body: formData,
+        });
+      })
+    );
+    
+    console.log(minioRes);
+
+    await Promise.all(
+      presignedResJson.map(async (json) => {
+        const formData = new FormData();
+        formData.append("uuid", json.uuid);
+        return fetch(`${config.urlHost}/media/seal`, {
+          credentials: "include",
+          method: "POST",
+          body: formData,
+        });
+      })
+    );
+
+    const sealRequestReqFormData = new FormData();
+    sealRequestReqFormData.append("requestId", requestId);
+    await fetch(`${config.urlHost}/request/seal`, {
+      credentials: "include",
+      method: "POST",
+      body: sealRequestReqFormData,
+    });
+
   };
 
   return (

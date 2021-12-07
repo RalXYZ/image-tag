@@ -16,8 +16,9 @@ func InitWebFramework() {
 	r = gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"POST", "GET"},
+		AllowCredentials: true,
+		AllowOrigins:     []string{"http://127.0.0.1:8000"},
+		AllowMethods:     []string{"POST", "GET"},
 	}))
 
 	addRouter()

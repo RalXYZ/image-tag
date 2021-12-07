@@ -33,7 +33,7 @@ func createRequest(c *gin.Context) {
 }
 
 func sealRequest(c *gin.Context) {
-	id := c.Param("id")
+	id := c.PostForm("requestId")
 	if id == "" {
 		c.String(http.StatusBadRequest, error.RequiredFieldMissing)
 		return
