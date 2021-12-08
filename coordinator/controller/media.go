@@ -1,13 +1,14 @@
 package controller
 
 import (
-	"coordinator/error"
+	e "coordinator/error"
 	"coordinator/model"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 )
@@ -24,7 +25,7 @@ func createMedia(c *gin.Context) {
 	requestIDInt, err := strconv.ParseUint(requestID, 10, 64)
 	if err != nil {
 		logrus.Error(err)
-		c.String(http.StatusBadRequest, error.InvalidRequestArgument)
+		c.String(http.StatusBadRequest, e.InvalidRequestArgument)
 		return
 	}
 
@@ -32,7 +33,7 @@ func createMedia(c *gin.Context) {
 	uuid, err := uuid.NewV4()
 	if err != nil {
 		logrus.Error(err)
-		c.String(http.StatusInternalServerError, error.InternalServerError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
 		return
 	}
 	_ = policy.SetBucket(model.BucketName)
@@ -52,7 +53,7 @@ func createMedia(c *gin.Context) {
 
 	if result.Error != nil {
 		logrus.Error(result.Error)
-		c.String(http.StatusInternalServerError, error.InternalServerError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
 		return
 	}
 
@@ -71,7 +72,7 @@ func getMediaById(c *gin.Context) {
 	result := model.DB.Where("uuid = ?", id).First(&media)
 	if result.Error != nil {
 		logrus.Error(result.Error)
-		c.String(http.StatusInternalServerError, error.InternalServerError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
 		return
 	}
 	c.JSON(http.StatusOK, &media)
@@ -83,7 +84,7 @@ func getMediaByUser(c *gin.Context) {
 	result := model.DB.Where("uploader_id = ?", user).Find(&media)
 	if result.Error != nil {
 		logrus.Error(result.Error)
-		c.String(http.StatusInternalServerError, error.InternalServerError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
 		return
 	}
 	c.JSON(http.StatusOK, &media)
@@ -92,17 +93,68 @@ func getMediaByUser(c *gin.Context) {
 func sealMedia(c *gin.Context) {
 	uuid := c.PostForm("uuid")
 	if uuid == "" {
-		c.String(http.StatusBadRequest, error.RequiredFieldMissing)
+		c.String(http.StatusBadRequest, e.RequiredFieldMissing)
 		return
 	}
 
 	result := model.DB.Model(&model.Media{}).Where("uuid = ?", uuid).Update("finished", true)
 	if result.Error != nil {
 		logrus.Error(result.Error)
-		c.String(http.StatusInternalServerError, error.InternalServerError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
 		return
 	}
 
 	c.String(http.StatusOK, "")
+	return
+}
+
+func getAllImagesByRequest(c *gin.Context) {
+	if c.Param("requestId") == "" {
+		c.String(http.StatusBadRequest, e.RequiredFieldMissing)
+		return
+	}
+
+	var medias []model.Media
+	result := model.DB.Model(&model.Media{}).Where("request_id = ?", c.Param("requestId")).Find(&medias)
+	if result.Error != nil {
+		logrus.Error(result.Error)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
+		return
+	}
+
+	mediaNum := len(medias)
+
+	urls := make(chan string, mediaNum)
+
+	var presignedError error
+	for _, media := range medias {
+		media := media
+		go func() {
+			mediaUUID := media.UUID
+			reqParams := make(url.Values)
+			reqParams.Set("response-content-disposition", "inline")
+
+			presignedURL, err := model.MC.PresignedGetObject(c,
+				model.BucketName, mediaUUID.String(), time.Minute*10, reqParams)
+			if err != nil {
+				logrus.Error(err)
+				presignedError = err
+			}
+			urls <- presignedURL.String()
+		}()
+	}
+
+	if presignedError != nil {
+		logrus.Error(presignedError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
+		return
+	}
+
+	var urlStrings []string
+	for i := 0; i < mediaNum; i++ {
+		urlStrings = append(urlStrings, <-urls)
+	}
+
+	c.JSON(http.StatusOK, &urlStrings)
 	return
 }

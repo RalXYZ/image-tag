@@ -3,6 +3,7 @@ package controller
 import (
 	"coordinator/error"
 	"coordinator/model"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -63,4 +64,22 @@ func sealRequest(c *gin.Context) {
 	}
 
 	c.String(http.StatusOK, "")
+}
+
+func getRequestByUser(c *gin.Context) {
+	var requests []model.Request
+
+	fmt.Println(c.GetString("username"))
+
+	result := model.DB.
+		Where("uploader_id = ? AND upload_finished = 1", c.GetString("username")).
+		Find(&requests)
+
+	if result.Error != nil {
+		logrus.Error(result.Error)
+		c.String(http.StatusInternalServerError, error.InternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, requests)
 }

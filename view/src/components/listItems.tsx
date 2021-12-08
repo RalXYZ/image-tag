@@ -51,7 +51,7 @@ export const mainListItems = (
 export const secondaryListItems = (
   <div>
     <ListSubheader inset>My</ListSubheader>
-    <ListItem button>
+    <ListItem button onClick={() => navigate("/request")}>
       <ListItemIcon>
         <PermMediaIcon />
       </ListItemIcon>

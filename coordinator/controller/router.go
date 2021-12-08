@@ -13,8 +13,10 @@ func addRouter() {
 	media.GET("/:uuid", getMediaById)
 	media.POST("", createMedia)
 	media.POST("seal", sealMedia)
+	media.GET("request/:requestId", getAllImagesByRequest)
 
 	request := r.Group("request", middleware.Authenticate())
 	request.POST("", createRequest)
 	request.POST("seal", sealRequest)
+	request.GET("", getRequestByUser)
 }

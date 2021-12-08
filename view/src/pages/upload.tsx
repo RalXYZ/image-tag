@@ -1,17 +1,10 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
-import { ThemeProvider } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import mdTheme from "../theme";
-import CssBaseline from "@mui/material/CssBaseline";
-import Sidebar from "../components/sidebar";
-import TopBar from "../components/topbar";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Copyright from "../components/copyright";
 import Paper from "@mui/material/Paper";
-import Toolbar from "@mui/material/Toolbar";
 import TextField from "@mui/material/TextField";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -22,6 +15,7 @@ import TableBody from "@mui/material/TableBody";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import SendIcon from "@mui/icons-material/Send";
 import config from "../config";
+import Layout from "../components/layout";
 
 const Input = styled("input")({
   display: "none",
@@ -56,7 +50,6 @@ const FileList: React.FC<{ files: File[] }> = (props: { files: File[] }) => {
 };
 
 const Upload: React.FC = () => {
-  const [open, setOpen] = React.useState<boolean>(true);
   const [name, setName] = React.useState<string>("");
   const [files, setFiles] = React.useState<File[]>([]);
 
@@ -77,7 +70,7 @@ const Upload: React.FC = () => {
       credentials: "include",
       method: "POST",
       body: createRequestFormData,
-    })
+    });
 
     const requestId = await res.text();
     const presignedReqFormData = new FormData();
@@ -95,7 +88,9 @@ const Upload: React.FC = () => {
 
     console.log(presignedRes);
 
-    const presignedResJson = await Promise.all(presignedRes.map((res) => res.json()));
+    const presignedResJson = await Promise.all(
+      presignedRes.map((res) => res.json())
+    );
 
     const minioRes = await Promise.all(
       presignedResJson.map((json, i) => {
@@ -114,7 +109,7 @@ const Upload: React.FC = () => {
         });
       })
     );
-    
+
     console.log(minioRes);
 
     await Promise.all(
@@ -136,71 +131,51 @@ const Upload: React.FC = () => {
       method: "POST",
       body: sealRequestReqFormData,
     });
-
   };
 
   return (
-    <ThemeProvider theme={mdTheme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <TopBar open={open} setOpen={setOpen} title="Upload" />
-        <Sidebar open={open} setOpen={setOpen} />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <TextField
-                    id="outlined-basic"
-                    label="Assignment Name"
-                    variant="outlined"
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  <FileList files={files} />
-                  <label htmlFor="contained-button-file">
-                    <Input
-                      accept="image/*"
-                      id="contained-button-file"
-                      multiple
-                      type="file"
-                      onChange={onFileChange}
-                    />
-                    <Button
-                      variant="contained"
-                      component="span"
-                      startIcon={<UploadFileIcon />}
-                    >
-                      Select Files
-                    </Button>
-                  </label>
-                  <Button
-                    variant="contained"
-                    component="span"
-                    endIcon={<SendIcon />}
-                    onClick={onSubmit}
-                  >
-                    Upload
-                  </Button>
-                </Paper>
-              </Grid>
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
-        </Box>
-      </Box>
-    </ThemeProvider>
+    <Layout>
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+              <TextField
+                id="outlined-basic"
+                label="Assignment Name"
+                variant="outlined"
+                onChange={(e) => setName(e.target.value)}
+              />
+              <FileList files={files} />
+              <label htmlFor="contained-button-file">
+                <Input
+                  accept="image/*"
+                  id="contained-button-file"
+                  multiple
+                  type="file"
+                  onChange={onFileChange}
+                />
+                <Button
+                  variant="contained"
+                  component="span"
+                  startIcon={<UploadFileIcon />}
+                >
+                  Select Files
+                </Button>
+              </label>
+              <Button
+                variant="contained"
+                component="span"
+                endIcon={<SendIcon />}
+                onClick={onSubmit}
+              >
+                Upload
+              </Button>
+            </Paper>
+          </Grid>
+        </Grid>
+        <Copyright sx={{ pt: 4 }} />
+      </Container>
+    </Layout>
   );
 };
 
