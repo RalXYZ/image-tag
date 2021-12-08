@@ -38,11 +38,7 @@ const TopBar: React.FC<{
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
-}> = (props: {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  title: string;
-}) => {
+}> = (props) => {
   return (
     <AppBar position="absolute" open={props.open}>
       <Toolbar

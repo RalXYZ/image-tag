@@ -39,10 +39,7 @@ const Drawer = styled(MuiDrawer, {
 const Sidebar: React.FC<{
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}> = (props: {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+}> = (props) => {
   return (
     <Drawer variant="permanent" open={props.open}>
       <Toolbar

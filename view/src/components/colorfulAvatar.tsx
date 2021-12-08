@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 
-const ColorfulAvatar: React.FC<{name: string}> = (props: {name: string}) => {
+const ColorfulAvatar: React.FC<{name: string}> = (props) => {
 
   function stringToColor(string: string) {
     let hash = 0;

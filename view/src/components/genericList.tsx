@@ -8,6 +8,7 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import Button from "@mui/material/Button";
 import ColorfulAvatar from "./colorfulAvatar";
+import { navigate } from "gatsby";
 
 export interface GenericListProp {
   ID: string;
@@ -16,9 +17,7 @@ export interface GenericListProp {
   CreateTime: Date;
 }
 
-const GenericList: React.FC<{ data: GenericListProp[] }> = (props: {
-  data: GenericListProp[];
-}) => {
+const GenericList: React.FC<{ data: GenericListProp[] }> = (props) => {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
@@ -48,7 +47,14 @@ const GenericList: React.FC<{ data: GenericListProp[] }> = (props: {
               <TableCell align="left">{row.UploaderID}</TableCell>
               <TableCell align="left">{row.CreateTime}</TableCell>
               <TableCell align="left">
-                <Button variant="contained">Foo</Button>
+                <Button
+                  variant="contained"
+                  onClick={() =>
+                    navigate("/detail", { state: { requestId: row.ID } })
+                  }
+                >
+                  Foo
+                </Button>
               </TableCell>
             </TableRow>
           ))}

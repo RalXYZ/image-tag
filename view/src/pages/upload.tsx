@@ -20,7 +20,7 @@ const Input = styled("input")({
   display: "none",
 });
 
-const FileList: React.FC<{ files: File[] }> = (props: { files: File[] }) => {
+const FileList: React.FC<{ files: File[] }> = (props) => {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">

@@ -13,7 +13,7 @@ const Layout: React.FC = (props) => {
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <TopBar open={open} setOpen={setOpen} title="Void" />
+        <TopBar open={open} setOpen={setOpen} title="Image Annotation" />
         <Sidebar open={open} setOpen={setOpen} />
         <Box
           component="main"
