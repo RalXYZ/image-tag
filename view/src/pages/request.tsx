@@ -3,7 +3,6 @@ import config from "../config";
 import { useState, useEffect } from "react";
 import type { GenericListProp } from "../components/genericList";
 import GenericList from "../components/genericList";
-import Layout from "../components/layout";
 
 const Upload: React.FC = () => {
   const [listProps, setListProps] = useState<GenericListProp[]>([]);
@@ -19,11 +18,7 @@ const Upload: React.FC = () => {
     });
   }, []);
 
-  return (
-    <Layout>
-      <GenericList data={listProps} />
-    </Layout>
-  );
+  return <GenericList data={listProps} />;
 };
 
 export default Upload;

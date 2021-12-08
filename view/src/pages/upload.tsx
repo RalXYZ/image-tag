@@ -15,7 +15,6 @@ import TableBody from "@mui/material/TableBody";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import SendIcon from "@mui/icons-material/Send";
 import config from "../config";
-import Layout from "../components/layout";
 
 const Input = styled("input")({
   display: "none",
@@ -134,48 +133,46 @@ const Upload: React.FC = () => {
   };
 
   return (
-    <Layout>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-              <TextField
-                id="outlined-basic"
-                label="Assignment Name"
-                variant="outlined"
-                onChange={(e) => setName(e.target.value)}
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+            <TextField
+              id="outlined-basic"
+              label="Assignment Name"
+              variant="outlined"
+              onChange={(e) => setName(e.target.value)}
+            />
+            <FileList files={files} />
+            <label htmlFor="contained-button-file">
+              <Input
+                accept="image/*"
+                id="contained-button-file"
+                multiple
+                type="file"
+                onChange={onFileChange}
               />
-              <FileList files={files} />
-              <label htmlFor="contained-button-file">
-                <Input
-                  accept="image/*"
-                  id="contained-button-file"
-                  multiple
-                  type="file"
-                  onChange={onFileChange}
-                />
-                <Button
-                  variant="contained"
-                  component="span"
-                  startIcon={<UploadFileIcon />}
-                >
-                  Select Files
-                </Button>
-              </label>
               <Button
                 variant="contained"
                 component="span"
-                endIcon={<SendIcon />}
-                onClick={onSubmit}
+                startIcon={<UploadFileIcon />}
               >
-                Upload
+                Select Files
               </Button>
-            </Paper>
-          </Grid>
+            </label>
+            <Button
+              variant="contained"
+              component="span"
+              endIcon={<SendIcon />}
+              onClick={onSubmit}
+            >
+              Upload
+            </Button>
+          </Paper>
         </Grid>
-        <Copyright sx={{ pt: 4 }} />
-      </Container>
-    </Layout>
+      </Grid>
+      <Copyright sx={{ pt: 4 }} />
+    </Container>
   );
 };
 

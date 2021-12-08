@@ -6,7 +6,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 import ColorfulAvatar from "./colorfulAvatar";
 
 export interface GenericListProp {
@@ -27,7 +27,7 @@ const GenericList: React.FC<{ data: GenericListProp[] }> = (props: {
             <TableCell>ID</TableCell>
             <TableCell align="left">Avatar</TableCell>
             <TableCell align="left">Name</TableCell>
-            <TableCell align="left">User Name</TableCell>
+            <TableCell align="left">Username</TableCell>
             <TableCell align="left">Create Time</TableCell>
             <TableCell align="left">Go To</TableCell>
           </TableRow>
@@ -42,15 +42,13 @@ const GenericList: React.FC<{ data: GenericListProp[] }> = (props: {
                 {row.ID}
               </TableCell>
               <TableCell align="right">
-                <ColorfulAvatar name={row.UploaderID}/>
+                <ColorfulAvatar name={row.UploaderID} />
               </TableCell>
               <TableCell align="left">{row.Name}</TableCell>
               <TableCell align="left">{row.UploaderID}</TableCell>
               <TableCell align="left">{row.CreateTime}</TableCell>
               <TableCell align="left">
-                <Button variant="contained">
-                  Foo
-                </Button>
+                <Button variant="contained">Foo</Button>
               </TableCell>
             </TableRow>
           ))}
