@@ -57,7 +57,7 @@ func createMedia(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &PresignedPost{
+	c.JSON(http.StatusCreated, &PresignedPost{
 		Url:    url.String(),
 		Policy: formData,
 		UUID:   uuid.String(),
@@ -104,7 +104,7 @@ func sealMedia(c *gin.Context) {
 		return
 	}
 
-	c.String(http.StatusOK, "")
+	c.String(http.StatusNoContent, "")
 	return
 }
 

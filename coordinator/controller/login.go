@@ -14,10 +14,10 @@ import (
 
 func getLoginStatus(c *gin.Context) {
 	if username := c.GetString("username"); username != "" {
-        c.String(http.StatusOK, username)
-    } else {
-        c.String(http.StatusNotFound, "")
-    }
+		c.String(http.StatusOK, username)
+	} else {
+		c.String(http.StatusNotFound, "")
+	}
 }
 
 func register(c *gin.Context) {
@@ -36,18 +36,18 @@ func register(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "")
 		return
 	}
-	if model.DB.Create(&model.User {
-		Name: name,
-		Username: username,
-		Password: passwordHashed,
-		Email: email,
-		SessionId: uuid.NullUUID{}.UUID,  // FIXME: maybe a bug
+	if model.DB.Create(&model.User{
+		Name:      name,
+		Username:  username,
+		Password:  passwordHashed,
+		Email:     email,
+		SessionId: uuid.NullUUID{}.UUID, // FIXME: maybe a bug
 	}).Error != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	c.String(http.StatusOK, "")
+	c.String(http.StatusCreated, "")
 }
 
 func login(c *gin.Context) {

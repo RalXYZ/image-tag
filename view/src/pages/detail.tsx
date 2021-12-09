@@ -28,7 +28,7 @@ const Detail: React.FC<{
     <Grid container spacing={2}>
       {imgUrls.map((url: string) => (
         <Grid item xs={12} sm={6} md={4} lg={3}>
-          <Image src={url} color="black" />
+          <Image src={url} color="gray" animationDuration={500} />
         </Grid>
       ))}
     </Grid>

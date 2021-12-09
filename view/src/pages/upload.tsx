@@ -117,7 +117,7 @@ const Upload: React.FC = () => {
         formData.append("uuid", json.uuid);
         return fetch(`${config.urlHost}/media/seal`, {
           credentials: "include",
-          method: "POST",
+          method: "PUT",
           body: formData,
         });
       })
@@ -127,7 +127,7 @@ const Upload: React.FC = () => {
     sealRequestReqFormData.append("requestId", requestId);
     await fetch(`${config.urlHost}/request/seal`, {
       credentials: "include",
-      method: "POST",
+      method: "PUT",
       body: sealRequestReqFormData,
     });
   };

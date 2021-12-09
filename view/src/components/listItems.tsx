@@ -1,16 +1,17 @@
-import * as React from 'react';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import PeopleIcon from '@mui/icons-material/People';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
-import ReviewsIcon from '@mui/icons-material/Reviews';
-import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned';
-import PermMediaIcon from '@mui/icons-material/PermMedia';
+import * as React from "react";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import ListSubheader from "@mui/material/ListSubheader";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import PeopleIcon from "@mui/icons-material/People";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import LayersIcon from "@mui/icons-material/Layers";
+import ReviewsIcon from "@mui/icons-material/Reviews";
+import AssignmentReturnedIcon from "@mui/icons-material/AssignmentReturned";
+import PermMediaIcon from "@mui/icons-material/PermMedia";
+import ExploreIcon from "@mui/icons-material/Explore";
 import { navigate } from "gatsby";
 
 export const mainListItems = (
@@ -27,23 +28,11 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Upload" />
     </ListItem>
-    <ListItem button>
+    <ListItem button onClick={() => navigate("/discover")}>
       <ListItemIcon>
-        <PeopleIcon />
+        <ExploreIcon />
       </ListItemIcon>
-      <ListItemText primary="Customers" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Reports" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Integrations" />
+      <ListItemText primary="Discover" />
     </ListItem>
   </div>
 );
@@ -57,7 +46,7 @@ export const secondaryListItems = (
       </ListItemIcon>
       <ListItemText primary="Request" />
     </ListItem>
-    <ListItem button>
+    <ListItem button onClick={() => navigate("/assignment")}>
       <ListItemIcon>
         <AssignmentReturnedIcon />
       </ListItemIcon>

@@ -1,4 +1,6 @@
 import * as React from "react";
+import config from "../config";
+import { useState, useEffect } from "react";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
@@ -6,22 +8,29 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import Button from "@mui/material/Button";
-import ColorfulAvatar from "./colorfulAvatar";
+import ColorfulAvatar from "../components/colorfulAvatar";
+import type { GenericListProp } from "../components/genericList";
+import AssignmentStatus from "../components/assignmentStatus";
 
-export interface GenericListProp {
-  ID: string;
-  Name: string;
-  UploaderID: string;
-  CreateTime: Date;
+interface AssignmentProp {
+  Request: GenericListProp;
+  Status: number;
 }
 
-export interface GenericListSkeleton {
-  buttonName: string;
-  buttonCallback: (id: string) => any;
-}
+const Discover: React.FC = () => {
+  const [listProps, setListProps] = useState<AssignmentProp[]>([]);
 
-const GenericList: React.FC<{ data: GenericListProp[], skeleton: GenericListSkeleton }> = (props) => {
+  useEffect(() => {
+    fetch(`${config.urlHost}/assignment`, {
+      credentials: "include",
+      method: "GET",
+    }).then((res) => {
+      res.json().then((data) => {
+        setListProps(data as AssignmentProp[]);
+      });
+    });
+  }, []);
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
@@ -32,31 +41,26 @@ const GenericList: React.FC<{ data: GenericListProp[], skeleton: GenericListSkel
             <TableCell align="left">Name</TableCell>
             <TableCell align="left">Username</TableCell>
             <TableCell align="left">Create Time</TableCell>
-            <TableCell align="left">Go To</TableCell>
+            <TableCell align="left">Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.data.map((row) => (
+          {listProps.map((row) => (
             <TableRow
-              key={row.ID}
+              key={row.Request.ID}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.ID}
+                {row.Request.ID}
               </TableCell>
               <TableCell align="right">
-                <ColorfulAvatar name={row.UploaderID} />
+                <ColorfulAvatar name={row.Request.UploaderID} />
               </TableCell>
-              <TableCell align="left">{row.Name}</TableCell>
-              <TableCell align="left">{row.UploaderID}</TableCell>
-              <TableCell align="left">{row.CreateTime}</TableCell>
+              <TableCell align="left">{row.Request.Name}</TableCell>
+              <TableCell align="left">{row.Request.UploaderID}</TableCell>
+              <TableCell align="left">{row.Request.CreateTime}</TableCell>
               <TableCell align="left">
-                <Button
-                  variant="contained"
-                  onClick={() => props.skeleton.buttonCallback(row.ID)}
-                >
-                  {props.skeleton.buttonName}
-                </Button>
+                <AssignmentStatus status={row.Status} />
               </TableCell>
             </TableRow>
           ))}
@@ -66,4 +70,4 @@ const GenericList: React.FC<{ data: GenericListProp[], skeleton: GenericListSkel
   );
 };
 
-export default GenericList;
+export default Discover;

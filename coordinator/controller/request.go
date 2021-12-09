@@ -30,7 +30,7 @@ func createRequest(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, request.ID)
+	c.JSON(http.StatusCreated, request.ID)
 }
 
 func sealRequest(c *gin.Context) {
@@ -63,7 +63,7 @@ func sealRequest(c *gin.Context) {
 		return
 	}
 
-	c.String(http.StatusOK, "")
+	c.String(http.StatusNoContent, "")
 }
 
 func getRequestByUser(c *gin.Context) {
@@ -82,4 +82,19 @@ func getRequestByUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, requests)
+}
+
+func getRequest(c *gin.Context) {
+	var request []model.Request
+
+	result := model.DB.
+		Where("upload_finished = 1").
+		Find(&request)
+	if result.Error != nil {
+		logrus.Error(result.Error)
+		c.String(http.StatusInternalServerError, error.InternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, request)
 }
