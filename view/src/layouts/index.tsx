@@ -28,7 +28,7 @@ const Layout: React.FC = (props) => {
           }}
         >
           <Toolbar />
-          {props.children}
+          <Box sx={{padding: "8px"}}>{props.children}</Box>
         </Box>
       </Box>
     </ThemeProvider>

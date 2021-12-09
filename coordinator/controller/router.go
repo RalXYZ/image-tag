@@ -20,6 +20,7 @@ func addRouter() {
 	request.PUT("seal", sealRequest)
 	request.GET("my", getRequestByUser)
 	request.GET("", getRequest)
+	request.GET("id/:id", getRequestByRequestId)
 
 	assignment := r.Group("assignment", middleware.Authenticate())
 	assignment.POST("request/:requestId", createAssignment)

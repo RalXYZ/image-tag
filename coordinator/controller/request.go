@@ -98,3 +98,18 @@ func getRequest(c *gin.Context) {
 
 	c.JSON(http.StatusOK, request)
 }
+
+func getRequestByRequestId(c *gin.Context) {
+	id := c.Param("id")
+
+	request := model.Request{}
+	result := model.DB.First(&request, id)
+
+	if result.Error != nil {
+		logrus.Error(result.Error)
+		c.String(http.StatusInternalServerError, error.InternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, request)
+}
