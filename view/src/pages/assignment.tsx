@@ -11,6 +11,8 @@ import TableBody from "@mui/material/TableBody";
 import ColorfulAvatar from "../components/colorfulAvatar";
 import type { GenericListProp } from "../components/genericList";
 import AssignmentStatus from "../components/assignmentStatus";
+import Button from "@mui/material/Button";
+import { navigate } from "gatsby-link";
 
 interface AssignmentProp {
   Request: GenericListProp;
@@ -42,6 +44,7 @@ const Discover: React.FC = () => {
             <TableCell align="left">Username</TableCell>
             <TableCell align="left">Create Time</TableCell>
             <TableCell align="left">Status</TableCell>
+            <TableCell align="left">Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -61,6 +64,31 @@ const Discover: React.FC = () => {
               <TableCell align="left">{row.Request.CreateTime}</TableCell>
               <TableCell align="left">
                 <AssignmentStatus status={row.Status} />
+              </TableCell>
+              <TableCell align="left">
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    fetch(`${config.urlHost}/media/request/${row.Request.ID}`, {
+                      credentials: "include",
+                      method: "GET",
+                    }).then((res) => {
+                      res.json().then((data: string[]) => {
+                        const imageList = data.map((item, i) => {
+                          return {
+                            key: i,
+                            src: item,
+                            name: item.split("?").shift().split("/").pop(),
+                            regions: [],
+                          }
+                        });
+                        navigate("/annotation", {state: {images: imageList}});
+                      });
+                    });
+                  }}
+                >
+                  Annotate
+                </Button>
               </TableCell>
             </TableRow>
           ))}
