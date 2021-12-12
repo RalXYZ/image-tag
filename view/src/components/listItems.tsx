@@ -52,7 +52,7 @@ export const secondaryListItems = (
       </ListItemIcon>
       <ListItemText primary="Assignment" />
     </ListItem>
-    <ListItem button>
+    <ListItem button onClick={() => navigate("/review")}>
       <ListItemIcon>
         <ReviewsIcon />
       </ListItemIcon>

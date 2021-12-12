@@ -24,7 +24,7 @@ func Authenticate() gin.HandlerFunc {
 		}
 
 		user := model.User{SessionId: uuidUser}
-		if err = model.DB.First(&user).Error; err  == gorm.ErrRecordNotFound {
+		if err = model.DB.First(&user).Error; err == gorm.ErrRecordNotFound {
 			c.String(http.StatusInternalServerError, "")
 			return
 		} else if err != nil {

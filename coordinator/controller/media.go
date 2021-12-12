@@ -47,7 +47,7 @@ func createMedia(c *gin.Context) {
 	}
 	result := model.DB.Create(&model.Media{
 		RequestID:  requestIDInt,
-		UUID:       uuid,
+		ID:         uuid,
 		UploaderID: c.GetString("username"),
 	})
 
@@ -69,7 +69,7 @@ func createMedia(c *gin.Context) {
 func getMediaById(c *gin.Context) {
 	id := c.Param("uuid")
 	media := model.Media{}
-	result := model.DB.Where("uuid = ?", id).First(&media)
+	result := model.DB.Where("id = ?", id).First(&media)
 	if result.Error != nil {
 		logrus.Error(result.Error)
 		c.String(http.StatusInternalServerError, e.InternalServerError)
@@ -97,7 +97,7 @@ func sealMedia(c *gin.Context) {
 		return
 	}
 
-	result := model.DB.Model(&model.Media{}).Where("uuid = ?", uuid).Update("finished", true)
+	result := model.DB.Model(&model.Media{}).Where("id = ?", uuid).Update("finished", true)
 	if result.Error != nil {
 		logrus.Error(result.Error)
 		c.String(http.StatusInternalServerError, e.InternalServerError)
@@ -130,7 +130,7 @@ func getAllImagesByRequest(c *gin.Context) {
 	for _, media := range medias {
 		media := media
 		go func() {
-			mediaUUID := media.UUID
+			mediaUUID := media.ID
 			reqParams := make(url.Values)
 			reqParams.Set("response-content-disposition", "inline")
 

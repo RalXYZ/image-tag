@@ -17,8 +17,8 @@ func InitWebFramework() {
 
 	r.Use(cors.New(cors.Config{
 		AllowCredentials: true,
-		AllowOrigins:     []string{"http://127.0.0.1:8000"},
-		AllowMethods:     []string{"POST", "GET"},
+		AllowOrigins:     []string{"http://127.0.0.1:8000", "http://localhost:8000"},
+		AllowMethods:     []string{"POST", "GET", "PUT"},
 	}))
 
 	addRouter()

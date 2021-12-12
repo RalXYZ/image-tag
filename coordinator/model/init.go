@@ -33,7 +33,7 @@ func connectDatabase() {
 }
 
 func migrate() {
-	err := DB.AutoMigrate(&User{}, &Request{}, &Media{}, &Assignment{})
+	err := DB.AutoMigrate(&User{}, &Request{}, &Media{}, &Assignment{}, &Annotation{})
 	if err != nil {
 		log.Fatal(err)
 	}

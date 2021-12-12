@@ -13,7 +13,8 @@ export interface GenericListProp {
   ID: string;
   Name: string;
   UploaderID: string;
-  CreateTime: Date;
+  CreatedAt: string;
+  UpdatedAt: string;
 }
 
 export interface GenericListSkeleton {
@@ -36,7 +37,7 @@ const GenericList: React.FC<{ data: GenericListProp[], skeleton: GenericListSkel
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.data.map((row) => (
+          {props.data.map((row: GenericListProp) => (
             <TableRow
               key={row.ID}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -49,7 +50,7 @@ const GenericList: React.FC<{ data: GenericListProp[], skeleton: GenericListSkel
               </TableCell>
               <TableCell align="left">{row.Name}</TableCell>
               <TableCell align="left">{row.UploaderID}</TableCell>
-              <TableCell align="left">{row.CreateTime}</TableCell>
+              <TableCell align="left">{row.CreatedAt}</TableCell>
               <TableCell align="left">
                 <Button
                   variant="contained"

@@ -19,7 +19,7 @@ interface AssignmentProp {
   Status: number;
 }
 
-const Discover: React.FC = () => {
+const Assignment: React.FC = () => {
   const [listProps, setListProps] = useState<AssignmentProp[]>([]);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const Discover: React.FC = () => {
             <TableCell align="left">Avatar</TableCell>
             <TableCell align="left">Name</TableCell>
             <TableCell align="left">Username</TableCell>
-            <TableCell align="left">Create Time</TableCell>
+            <TableCell align="left">Update Time</TableCell>
             <TableCell align="left">Status</TableCell>
             <TableCell align="left">Action</TableCell>
           </TableRow>
@@ -61,7 +61,7 @@ const Discover: React.FC = () => {
               </TableCell>
               <TableCell align="left">{row.Request.Name}</TableCell>
               <TableCell align="left">{row.Request.UploaderID}</TableCell>
-              <TableCell align="left">{row.Request.CreateTime}</TableCell>
+              <TableCell align="left">{row.Request.UpdatedAt}</TableCell>
               <TableCell align="left">
                 <AssignmentStatus status={row.Status} />
               </TableCell>
@@ -98,4 +98,4 @@ const Discover: React.FC = () => {
   );
 };
 
-export default Discover;
+export default Assignment;

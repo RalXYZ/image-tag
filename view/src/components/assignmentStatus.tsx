@@ -1,33 +1,20 @@
 import React from "react";
-import Chip from "@mui/material/Chip";
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
+import DoneIcon from '@mui/icons-material/Done';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import ClearIcon from '@mui/icons-material/Clear';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 const AssignmentStatus: React.FC<{ status: number }> = (props) => {
-  return (
-    <Chip
-      label={
-        props.status === 0
-          ? "claimed"
-          : props.status === 1
-          ? "checking"
-          : props.status === 2
-          ? "accepted"
-          : props.status === 3
-          ? "rejected"
-          : "unknown"
-      }
-      color={
-        props.status === 0
-          ? "primary"
-          : props.status === 1
-          ? "warning"
-          : props.status === 2
-          ? "success"
-          : props.status === 3
-          ? "error"
-          : "default"
-      }
-    />
-  );
+  return props.status === 0
+      ? <PendingActionsIcon color="info" />
+      : props.status === 1
+      ? <DoneIcon color="warning" />
+      : props.status === 2
+      ? <DoneAllIcon color="success" />
+      : props.status === 3
+      ? <ClearIcon color="error" />
+      : <QuestionMarkIcon color="disabled" />;
 };
 
 export default AssignmentStatus;

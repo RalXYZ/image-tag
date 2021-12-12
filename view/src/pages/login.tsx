@@ -17,6 +17,7 @@ import Copyright from "../components/copyright";
 import config from "../config";
 import { navigate } from "gatsby";
 import Alert from "@mui/material/Alert";
+import { Link as GatsbyLink } from "gatsby";
 
 const SignIn: React.FC = () => {
   const [error, setError] = React.useState<string | null>(null);
@@ -103,9 +104,9 @@ const SignIn: React.FC = () => {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
+                <GatsbyLink to="/register">
+                  Don't have an account? Sign Up
+                </GatsbyLink>
               </Grid>
             </Grid>
           </Box>

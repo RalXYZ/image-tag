@@ -4,9 +4,9 @@ import "coordinator/middleware"
 
 func addRouter() {
 	user := r.Group("user")
-	user.GET("", getLoginStatus, middleware.Authenticate())
 	user.POST("", register)
 	user.POST("login", login)
+	user.GET("", getLoginStatus, middleware.Authenticate())
 
 	media := r.Group("media", middleware.Authenticate())
 	media.GET("", getMediaByUser)
@@ -25,4 +25,8 @@ func addRouter() {
 	assignment := r.Group("assignment", middleware.Authenticate())
 	assignment.POST("request/:requestId", createAssignment)
 	assignment.GET("", getAssignmentByUser)
+	assignment.GET("review", getReviewByReviewer)
+
+	annotation := r.Group("annotation", middleware.Authenticate())
+	annotation.POST("", createAnnotation)
 }
