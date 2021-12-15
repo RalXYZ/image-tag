@@ -49,6 +49,7 @@ const FileList: React.FC<{ files: File[] }> = (props) => {
 };
 
 const Upload: React.FC = () => {
+  const clipNumber = 10;
   const [name, setName] = React.useState<string>("");
   const [files, setFiles] = React.useState<File[]>([]);
 
@@ -71,12 +72,44 @@ const Upload: React.FC = () => {
       body: createRequestFormData,
     });
 
+    const processedFiles: File[] = [];
+
+    files.map(async (file) => {
+      return new Promise<void>(async (resolve) => {
+        if (/image\/*/.test(file.type)) {
+          processedFiles.push(file);
+        } else if (/video\/*/.test(file.type)) {
+          let counter = 0;
+
+          const video = new HTMLVideoElement();
+          video.src = URL.createObjectURL(file);
+
+          new Array(clipNumber).forEach((_, i) => {
+            video.currentTime = (video.duration / clipNumber) * i;
+            const canvas = new HTMLCanvasElement();
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+            canvas.toBlob((blob) => {
+              processedFiles.push(blob as File);
+              counter += 1;
+            });
+          });
+
+          while (counter < clipNumber) {
+            await new Promise((r) => setTimeout(r, 100));
+          }
+
+          resolve();
+        }
+      });
+    });
+
     const requestId = await res.text();
     const presignedReqFormData = new FormData();
     presignedReqFormData.append("requestId", requestId);
 
     const presignedRes = await Promise.all(
-      files.map(() => {
+      processedFiles.map(() => {
         return fetch(`${config.urlHost}/media`, {
           credentials: "include",
           method: "POST",
@@ -101,7 +134,7 @@ const Upload: React.FC = () => {
         formData.append("x-amz-credential", json.policy["x-amz-credential"]);
         formData.append("x-amz-date", json.policy["x-amz-date"]);
         formData.append("x-amz-signature", json.policy["x-amz-signature"]);
-        formData.append("file", files[i]);
+        formData.append("file", processedFiles[i]);
         return fetch(json.url, {
           method: "POST",
           body: formData,
@@ -146,7 +179,7 @@ const Upload: React.FC = () => {
             <FileList files={files} />
             <label htmlFor="contained-button-file">
               <Input
-                accept="image/*"
+                accept="image/*,video/*"
                 id="contained-button-file"
                 multiple
                 type="file"
