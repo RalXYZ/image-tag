@@ -22,4 +22,4 @@ const darkTheme = createTheme({
   },
 });
 
-export default theme;
+export default darkTheme;

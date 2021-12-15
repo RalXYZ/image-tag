@@ -7,3 +7,12 @@ exports.onCreateWebpackConfig = ({ actions }) => {
     },
   })
 }
+
+exports.onCreatePage = ({ page, actions }) => {
+  const { createPage } = actions
+
+  if (page.path.match(/annotation/)) {
+    page.context.layout = "special"
+    createPage(page)
+  }
+}

@@ -12,6 +12,7 @@ import ColorfulAvatar from "./colorfulAvatar";
 export interface GenericListProp {
   ID: string;
   Name: string;
+  Tags: string;  // stores a array, needs to `JSON.parse(Tags)` before use
   UploaderID: string;
   CreatedAt: string;
   UpdatedAt: string;

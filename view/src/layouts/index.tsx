@@ -35,4 +35,11 @@ const Layout: React.FC = (props) => {
   );
 };
 
-export default Layout;
+// export default Layout;
+
+export default ({ children, pageContext }) => {
+  if (pageContext.layout === "special") {
+    return children;
+  }
+  return <Layout>{children}</Layout>;
+}

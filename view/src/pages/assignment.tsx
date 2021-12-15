@@ -82,7 +82,7 @@ const Assignment: React.FC = () => {
                             regions: [],
                           }
                         });
-                        navigate("/annotation", {state: {images: imageList}});
+                        navigate("/annotation", {state: {images: imageList, tags: JSON.parse(row.Request.Tags) as string[]}});
                       });
                     });
                   }}

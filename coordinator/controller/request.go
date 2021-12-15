@@ -12,13 +12,15 @@ import (
 // this method shall be called first at the start of each annotation request creation transaction
 func createRequest(c *gin.Context) {
 	name := c.PostForm("name")
-	if name == "" {
+	tags := c.PostForm("tags")
+	if name == "" || tags == "" {
 		c.String(http.StatusBadRequest, error.RequiredFieldMissing)
 		return
 	}
 
 	request := model.Request{
 		Name:       name,
+		Tags:       tags,
 		UploaderID: c.GetString("username"),
 	}
 

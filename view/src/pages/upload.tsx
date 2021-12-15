@@ -14,6 +14,7 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import SendIcon from "@mui/icons-material/Send";
+import Autocomplete from "@mui/material/Autocomplete";
 import config from "../config";
 
 const Input = styled("input")({
@@ -52,6 +53,7 @@ const Upload: React.FC = () => {
   const clipNumber = 10;
   const [name, setName] = React.useState<string>("");
   const [files, setFiles] = React.useState<File[]>([]);
+  const [tagList, setTagList] = React.useState<string[]>([]);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileArray = Array.from(e.target.files);
@@ -66,6 +68,7 @@ const Upload: React.FC = () => {
     console.log(files);
     const createRequestFormData = new FormData();
     createRequestFormData.append("name", name);
+    createRequestFormData.append("tags", JSON.stringify(tagList));
     const res = await fetch(`${config.urlHost}/request`, {
       credentials: "include",
       method: "POST",
@@ -175,6 +178,22 @@ const Upload: React.FC = () => {
               label="Assignment Name"
               variant="outlined"
               onChange={(e) => setName(e.target.value)}
+            />
+            <Autocomplete
+              multiple
+              freeSolo
+              options={[]}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="filled"
+                  label="freeSolo"
+                  placeholder="Favorites"
+                />
+              )}
+              onChange={(e, value) => {
+                setTagList(value);
+              }}
             />
             <FileList files={files} />
             <label htmlFor="contained-button-file">
