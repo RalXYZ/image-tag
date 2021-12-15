@@ -2,6 +2,15 @@ package model
 
 import "time"
 
+type AssignmentStatus uint64
+
+const (
+	CLAIMED   AssignmentStatus = 0
+	SUBMITTED AssignmentStatus = 1
+	ACCEPTED  AssignmentStatus = 2
+	REJECTED  AssignmentStatus = 3
+)
+
 type Assignment struct {
 	ID         uint64
 	RequestID  uint64

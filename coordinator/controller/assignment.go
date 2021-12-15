@@ -64,3 +64,45 @@ func getReviewByReviewer(c *gin.Context) {
 
 	c.JSON(http.StatusOK, assignments)
 }
+
+func reviewAssignment(c *gin.Context) {
+	assignmentID := c.Param("assignmentId")
+	newState := c.Param("newState")
+
+	if newState != strconv.Itoa(int(model.ACCEPTED)) && newState != strconv.Itoa(int(model.REJECTED)) {
+		c.String(http.StatusBadRequest, e.InvalidRequestArgument)
+		return
+	}
+
+	// convert assignmentID to uint64
+	assignmentIDUint64, err := strconv.ParseUint(assignmentID, 10, 64)
+	if err != nil {
+		c.String(http.StatusBadRequest, e.InvalidRequestArgument)
+		return
+	}
+
+	assignment := model.Assignment{}
+	result := model.DB.Model(&assignment).Where("id = ?", assignmentIDUint64)
+
+	if result.Error != nil {
+		logrus.Error(result.Error)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
+		return
+	}
+
+	if assignment.Status != uint64(model.SUBMITTED) {
+		c.String(http.StatusBadRequest, e.InvalidRequestBecauseOfCurrentState)
+		return
+	}
+
+	result = model.DB.Model(&model.Assignment{}).
+		Where("id = ?", assignmentIDUint64).Update("status", newState)
+
+	if result.Error != nil {
+		logrus.Error(result.Error)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
+		return
+	}
+
+	c.String(http.StatusResetContent, "")
+}
