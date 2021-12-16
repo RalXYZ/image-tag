@@ -15,9 +15,17 @@ import Button from "@mui/material/Button";
 import { navigate } from "gatsby-link";
 
 interface AssignmentProp {
+  ID: number;
   Request: GenericListProp;
   Status: number;
 }
+
+export enum AssignmentStatusEnum {
+  CLAIMED = 0,
+  SUBMITTED = 1,
+  ACCEPTED = 2,
+  REJECTED = 3,
+};
 
 const Assignment: React.FC = () => {
   const [listProps, setListProps] = useState<AssignmentProp[]>([]);
@@ -43,8 +51,8 @@ const Assignment: React.FC = () => {
             <TableCell align="left">Name</TableCell>
             <TableCell align="left">Username</TableCell>
             <TableCell align="left">Update Time</TableCell>
-            <TableCell align="left">Status</TableCell>
-            <TableCell align="left">Action</TableCell>
+            <TableCell align="center">Status</TableCell>
+            <TableCell align="center">Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -61,13 +69,14 @@ const Assignment: React.FC = () => {
               </TableCell>
               <TableCell align="left">{row.Request.Name}</TableCell>
               <TableCell align="left">{row.Request.UploaderID}</TableCell>
-              <TableCell align="left">{row.Request.UpdatedAt}</TableCell>
-              <TableCell align="left">
+              <TableCell align="left">{new Date(row.Request.UpdatedAt).toLocaleString()}</TableCell>
+              <TableCell align="center">
                 <AssignmentStatus status={row.Status} />
               </TableCell>
-              <TableCell align="left">
+              <TableCell align="center">
                 <Button
                   variant="contained"
+                  disabled={row.Status !== AssignmentStatusEnum.CLAIMED}
                   onClick={() => {
                     fetch(`${config.urlHost}/media/request/${row.Request.ID}`, {
                       credentials: "include",
@@ -82,7 +91,14 @@ const Assignment: React.FC = () => {
                             regions: [],
                           }
                         });
-                        navigate("/annotation", {state: {images: imageList, tags: JSON.parse(row.Request.Tags) as string[]}});
+                        navigate("/annotation", {
+                          state: {
+                            images: imageList,
+                            tags: JSON.parse(row.Request.Tags) as string[],
+                            assignmentID: row.ID,
+                            canSubmit: true,
+                          }
+                        });
                       });
                     });
                   }}

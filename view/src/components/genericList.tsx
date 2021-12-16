@@ -51,7 +51,7 @@ const GenericList: React.FC<{ data: GenericListProp[], skeleton: GenericListSkel
               </TableCell>
               <TableCell align="left">{row.Name}</TableCell>
               <TableCell align="left">{row.UploaderID}</TableCell>
-              <TableCell align="left">{row.CreatedAt}</TableCell>
+              <TableCell align="left">{new Date(row.CreatedAt).toLocaleString()}</TableCell>
               <TableCell align="left">
                 <Button
                   variant="contained"

@@ -54,8 +54,8 @@ const Detail: React.FC<{
       </Card>
       <Card sx={{ padding: "8px", margin: "8px" }}>
         <Grid container spacing={2}>
-          {imgUrls.map((url: string) => (
-            <Grid item xs={12} sm={6} md={4} lg={3}>
+          {imgUrls.map((url: string, id) => (
+            <Grid item key={id} xs={12} sm={6} md={4} lg={3}>
               <Image src={url} color="gray" animationDuration={500} />
             </Grid>
           ))}

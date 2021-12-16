@@ -1,8 +1,10 @@
+import { navigate } from "gatsby";
 import React, { useState } from "react";
 import ReactImageAnnotate from "react-image-annotate";
+import config from "../config";
 
 const Annotation = (props) => {
-  const [images, setImages] = useState(props.location.state.images);
+  const [images] = useState(props.location.state.images);
   const [selectedImage, setSelectedImage] = useState(0);
 
   const handleNext = () => {
@@ -23,7 +25,20 @@ const Annotation = (props) => {
       onPrevImage={handlePrev}
       regionClsList={["图形区域"]}
       regionTagList={props.location.state.tags}
-      onExit={(x) => console.log(x)}
+      onExit={(x) => {
+        if (props.location.state.canSubmit) {
+          const formData = new FormData();
+          formData.append("result", JSON.stringify(x));
+          formData.append("assignmentID", props.location.state.assignmentID);
+          fetch(`${config.urlHost}/assignment/annotation`, {
+            credentials: "include",
+            method: "PUT",
+            body: formData,
+          }).then(() => {
+            navigate(-1);
+          });
+        }
+      }}
       images={images}
     />
   );

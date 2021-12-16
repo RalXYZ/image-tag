@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"coordinator/error"
+	e "coordinator/error"
 	"coordinator/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -14,7 +14,7 @@ func createRequest(c *gin.Context) {
 	name := c.PostForm("name")
 	tags := c.PostForm("tags")
 	if name == "" || tags == "" {
-		c.String(http.StatusBadRequest, error.RequiredFieldMissing)
+		c.String(http.StatusBadRequest, e.RequiredFieldMissing)
 		return
 	}
 
@@ -28,7 +28,7 @@ func createRequest(c *gin.Context) {
 
 	if result.Error != nil {
 		logrus.Error(result.Error)
-		c.String(http.StatusInternalServerError, error.InternalServerError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
 		return
 	}
 
@@ -38,7 +38,7 @@ func createRequest(c *gin.Context) {
 func sealRequest(c *gin.Context) {
 	id := c.PostForm("requestId")
 	if id == "" {
-		c.String(http.StatusBadRequest, error.RequiredFieldMissing)
+		c.String(http.StatusBadRequest, e.RequiredFieldMissing)
 		return
 	}
 
@@ -47,12 +47,12 @@ func sealRequest(c *gin.Context) {
 
 	if result.Error != nil {
 		logrus.Error(result.Error)
-		c.String(http.StatusInternalServerError, error.InternalServerError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
 		return
 	}
 
 	if request.UploadFinished {
-		c.String(http.StatusBadRequest, error.RequestAlreadyFinished)
+		c.String(http.StatusBadRequest, e.RequestAlreadyFinished)
 		return
 	}
 
@@ -61,7 +61,7 @@ func sealRequest(c *gin.Context) {
 
 	if result.Error != nil {
 		logrus.Error(result.Error)
-		c.String(http.StatusInternalServerError, error.InternalServerError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
 		return
 	}
 
@@ -79,7 +79,7 @@ func getRequestByUser(c *gin.Context) {
 
 	if result.Error != nil {
 		logrus.Error(result.Error)
-		c.String(http.StatusInternalServerError, error.InternalServerError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
 		return
 	}
 
@@ -94,7 +94,7 @@ func getRequest(c *gin.Context) {
 		Find(&request)
 	if result.Error != nil {
 		logrus.Error(result.Error)
-		c.String(http.StatusInternalServerError, error.InternalServerError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
 		return
 	}
 
@@ -109,7 +109,7 @@ func getRequestByRequestId(c *gin.Context) {
 
 	if result.Error != nil {
 		logrus.Error(result.Error)
-		c.String(http.StatusInternalServerError, error.InternalServerError)
+		c.String(http.StatusInternalServerError, e.InternalServerError)
 		return
 	}
 

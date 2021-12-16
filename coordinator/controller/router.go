@@ -26,8 +26,7 @@ func addRouter() {
 	assignment.POST("request/:requestId", createAssignment)
 	assignment.GET("", getAssignmentByUser)
 	assignment.GET("review", getReviewByReviewer)
+	assignment.GET("review/:id", getAssignmentById)
 	assignment.PUT("review", reviewAssignment)
-
-	annotation := r.Group("annotation", middleware.Authenticate())
-	annotation.POST("", createAnnotation)
+	assignment.PUT("annotation", createAnnotation)
 }

@@ -15,6 +15,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import IconButton from "@mui/material/IconButton";
+import { AssignmentStatusEnum } from "./assignment";
 
 interface AssignmentReviewProp {
   ID: string;
@@ -23,12 +24,12 @@ interface AssignmentReviewProp {
   CreatedAt: string;
   UpdatedAt: string;
   Status: number;
-}
+};
 
 const Review: React.FC = () => {
   const [listProps, setListProps] = useState<AssignmentReviewProp[]>([]);
 
-  useEffect(() => {
+  const fetchData = () => {
     fetch(`${config.urlHost}/assignment/review`, {
       credentials: "include",
       method: "GET",
@@ -37,7 +38,24 @@ const Review: React.FC = () => {
         setListProps(data as AssignmentReviewProp[]);
       });
     });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
+
+  const doReview = (newState: AssignmentStatusEnum, assignmentID: string) => {
+    const formData = new FormData();
+    formData.append("newState", newState.toString());
+    formData.append("assignmentID", assignmentID.toString());
+    fetch(`${config.urlHost}/assignment/review`, {
+      credentials: "include",
+      method: "PUT",
+      body: formData,
+    }).then(() => {
+      fetchData();
+    });
+  }
 
   return (
     <TableContainer component={Paper}>
@@ -65,18 +83,60 @@ const Review: React.FC = () => {
                 <ColorfulAvatar name={row.AssigneeID} />
               </TableCell>
               <TableCell align="left">{row.AssigneeID}</TableCell>
-              <TableCell align="left">{row.UpdatedAt}</TableCell>
+              <TableCell align="left">{new Date(row.UpdatedAt).toLocaleString()}</TableCell>
               <TableCell align="center">
                 <AssignmentStatus status={row.Status} />
               </TableCell>
               <TableCell align="center">
-                <IconButton aria-label="no" color="info">
+                <IconButton
+                  aria-label="no"
+                  color="info"
+                  disabled={
+                    row.Status !== AssignmentStatusEnum.SUBMITTED
+                  }
+                  onClick={() => {
+                    fetch(`${config.urlHost}/assignment/review/${row.ID}`, {
+                      credentials: "include",
+                      method: "GET",
+                    }).then((res) => {
+                      res.json().then((data) => {
+                        const result = JSON.parse(data.Result)
+                        navigate("/annotation", {
+                          state: {
+                            images: result.images,
+                            tags: result.regionTagList as string[],
+                            assignmentID: row.ID,
+                            canSubmit: false,
+                          }
+                        });
+                      });
+                    });
+                  }}
+                >
                   <VisibilityIcon />
                 </IconButton>
-                <IconButton aria-label="check" color="success">
+                <IconButton
+                  aria-label="check"
+                  color="success"
+                  disabled={
+                    row.Status == AssignmentStatusEnum.SUBMITTED ? false : true
+                  }
+                  onClick={() => {
+                    doReview(AssignmentStatusEnum.ACCEPTED, row.ID);
+                  }}
+                >
                   <CheckCircleOutlineIcon />
                 </IconButton>
-                <IconButton aria-label="no" color="error">
+                <IconButton
+                  aria-label="no"
+                  color="error"
+                  disabled={
+                    row.Status == AssignmentStatusEnum.SUBMITTED ? false : true
+                  }
+                  onClick={() => {
+                    doReview(AssignmentStatusEnum.REJECTED, row.ID);
+                  }}
+                >
                   <DoNotDisturbIcon />
                 </IconButton>
               </TableCell>
