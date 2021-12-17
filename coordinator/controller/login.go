@@ -10,6 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"net/http"
+	"regexp"
 )
 
 func getLoginStatus(c *gin.Context) {
@@ -30,6 +31,17 @@ func register(c *gin.Context) {
 		c.String(http.StatusBadRequest, error.RequiredFieldMissing)
 		return
 	}
+	if len(password) <= 6 || len(username) <= 6 {
+		c.String(http.StatusBadRequest, error.InvalidRequestArgument)
+		return
+	}
+
+	r, _ := regexp.Compile("^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$")
+	if !r.MatchString(email) {
+		c.String(http.StatusBadRequest, error.InvalidRequestArgument)
+		return
+	}
+
 	passwordHashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Error(err)

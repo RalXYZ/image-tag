@@ -1,32 +1,61 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from '../theme';
-import Copyright from '../components/copyright';
-import config from '../config';
+import * as React from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../theme";
+import Copyright from "../components/copyright";
+import config from "../config";
 import { navigate } from "gatsby";
+import { useState } from "react";
+import { Link as GatsbyLink } from "gatsby";
 
 export default function Register() {
+  const [error, setError] = useState<"ok" | "username" | "password" | "email">(
+    "ok"
+  );
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // validate username
+    if ((event.currentTarget.elements as any).username.value.length <= 6) {
+      setError("username");
+      return;
+    }
+
+    // validate email
+    if (
+      !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(
+        (event.currentTarget.elements as any).email.value
+      )
+    ) {
+      setError("email");
+      return;
+    }
+
+    // validate password
+    if ((event.currentTarget.elements as any).password.value.length <= 6) {
+      setError("password");
+      return;
+    }
+
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     fetch(`${config.urlHost}/user`, {
-      method: 'POST',
+      method: "POST",
       body: data,
     })
-    .then(response => navigate("/"))
-    .catch(error => console.error(error));
+      .then((response) => {
+        if (response.status >> 2 === 200) {
+          navigate("/login");
+        }
+      })
+      .catch((error) => console.error(error));
   };
 
   return (
@@ -36,18 +65,23 @@ export default function Register() {
         <Box
           sx={{
             marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmit}
+            sx={{ mt: 3 }}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -67,6 +101,12 @@ export default function Register() {
                   id="username"
                   label="Username"
                   name="username"
+                  helperText={
+                    error === "username"
+                      ? "username must be longer than 6 characters and unique"
+                      : ""
+                  }
+                  error={error === "username"}
                   autoComplete="username"
                 />
               </Grid>
@@ -77,6 +117,11 @@ export default function Register() {
                   id="email"
                   label="Email Address"
                   name="email"
+                  type="email"
+                  helperText={
+                    error === "email" ? "email must be valid and unique" : ""
+                  }
+                  error={error === "email"}
                   autoComplete="email"
                 />
               </Grid>
@@ -88,13 +133,13 @@ export default function Register() {
                   label="Password"
                   type="password"
                   id="password"
+                  helperText={
+                    error === "password"
+                      ? "password must be longer than 6 characters"
+                      : ""
+                  }
+                  error={error === "password"}
                   autoComplete="new-password"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
                 />
               </Grid>
             </Grid>
@@ -108,9 +153,9 @@ export default function Register() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <GatsbyLink to="/login">
                   Already have an account? Sign in
-                </Link>
+                </GatsbyLink>
               </Grid>
             </Grid>
           </Box>

@@ -16,6 +16,7 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import SendIcon from "@mui/icons-material/Send";
 import Autocomplete from "@mui/material/Autocomplete";
 import config from "../config";
+import Box from "@mui/material/Box";
 
 const Input = styled("input")({
   display: "none",
@@ -23,7 +24,7 @@ const Input = styled("input")({
 
 const FileList: React.FC<{ files: File[] }> = (props) => {
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} hidden={props.files.length === 0}>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -50,7 +51,7 @@ const FileList: React.FC<{ files: File[] }> = (props) => {
 };
 
 const Upload: React.FC = () => {
-  const clipNumber = 10;
+  const [clipNumber, setClipNumber] = React.useState(10);
   const [name, setName] = React.useState<string>("");
   const [files, setFiles] = React.useState<File[]>([]);
   const [tagList, setTagList] = React.useState<string[]>([]);
@@ -173,53 +174,65 @@ const Upload: React.FC = () => {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-            <TextField
-              id="outlined-basic"
-              label="Assignment Name"
-              variant="outlined"
-              onChange={(e) => setName(e.target.value)}
-            />
-            <Autocomplete
-              multiple
-              freeSolo
-              options={[]}
-              renderInput={(params) => (
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
                 <TextField
-                  {...params}
-                  variant="filled"
-                  label="freeSolo"
-                  placeholder="Favorites"
+                  id="outlined-basic"
+                  label="Assignment Name"
+                  variant="outlined"
+                  onChange={(e) => setName(e.target.value)}
                 />
-              )}
-              onChange={(e, value) => {
-                setTagList(value);
-              }}
-            />
-            <FileList files={files} />
-            <label htmlFor="contained-button-file">
-              <Input
-                accept="image/*,video/*"
-                id="contained-button-file"
-                multiple
-                type="file"
-                onChange={onFileChange}
-              />
-              <Button
-                variant="contained"
-                component="span"
-                startIcon={<UploadFileIcon />}
-              >
-                Select Files
-              </Button>
-            </label>
-            <Button
-              variant="contained"
-              component="span"
-              endIcon={<SendIcon />}
-              onClick={onSubmit}
-            >
-              Upload
-            </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Autocomplete
+                  multiple
+                  freeSolo
+                  options={[]}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="tags"
+                      placeholder="fill in the tag and press ENTER to add it"
+                    />
+                  )}
+                  onChange={(e, value) => {
+                    setTagList(value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Box style={{ display: "flex", justifyContent: "space-between"}}>
+                  <label htmlFor="contained-button-file">
+                    <Input
+                      accept="image/*,video/*"
+                      id="contained-button-file"
+                      multiple
+                      type="file"
+                      onChange={onFileChange}
+                    />
+                    <Button
+                      variant="contained"
+                      component="span"
+                      startIcon={<UploadFileIcon />}
+                    >
+                      Select Files
+                    </Button>
+                  </label>
+                  <Button
+                    variant="contained"
+                    component="span"
+                    endIcon={<SendIcon />}
+                    onClick={onSubmit}
+                  >
+                    Upload
+                  </Button>
+                </Box>
+              </Grid>
+              <Grid item xs={12}>
+                <FileList files={files} />
+              </Grid>
+            </Grid>
           </Paper>
         </Grid>
       </Grid>
