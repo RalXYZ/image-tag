@@ -51,7 +51,8 @@ const FileList: React.FC<{ files: File[] }> = (props) => {
 };
 
 const Upload: React.FC = () => {
-  const [clipNumber, setClipNumber] = React.useState(10);
+  const [clipNumber, setClipNumber] = React.useState(5);
+  const [hasVideo, setHasVideo] = React.useState(false);
   const [name, setName] = React.useState<string>("");
   const [files, setFiles] = React.useState<File[]>([]);
   const [tagList, setTagList] = React.useState<string[]>([]);
@@ -61,12 +62,60 @@ const Upload: React.FC = () => {
     setFiles(fileArray);
     fileArray.forEach((file) => {
       console.log(file);
+      if (/video\/*/.test(file.type)) {
+        setHasVideo(true);
+      }
     });
     console.log(name);
   };
 
   const onSubmit = async () => {
     console.log(files);
+
+    console.log(clipNumber);
+
+    const processedFiles: File[] = [];
+
+    await Promise.all(
+      files.map(async (file) => {
+        return new Promise<void>(async (resolve) => {
+          if (/image\/*/.test(file.type)) {
+            processedFiles.push(file);
+          } else if (/video\/*/.test(file.type)) {
+            let counter = 0;
+
+            const video = document.createElement("video");
+            video.src = URL.createObjectURL(file);
+
+            video.onloadeddata = async (e) => {
+              console.log(e);
+              for (let i = 0; i < clipNumber; i++) {
+                video.currentTime = (video.duration / clipNumber) * i;
+                await new Promise((r) => setTimeout(r, 100));
+                const canvas = document.createElement("canvas");
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+                canvas.toBlob((blob) => {
+                  const f = new File([blob], "any name can be fine here");
+                  processedFiles.push(f);
+                  counter += 1;
+                });
+              }
+            };
+
+            while (counter < clipNumber) {
+              await new Promise((r) => setTimeout(r, 100));
+            }
+          }
+          resolve();
+        });
+      })
+    );
+
+    console.log(processedFiles);
+
     const createRequestFormData = new FormData();
     createRequestFormData.append("name", name);
     createRequestFormData.append("tags", JSON.stringify(tagList));
@@ -74,38 +123,6 @@ const Upload: React.FC = () => {
       credentials: "include",
       method: "POST",
       body: createRequestFormData,
-    });
-
-    const processedFiles: File[] = [];
-
-    files.map(async (file) => {
-      return new Promise<void>(async (resolve) => {
-        if (/image\/*/.test(file.type)) {
-          processedFiles.push(file);
-        } else if (/video\/*/.test(file.type)) {
-          let counter = 0;
-
-          const video = new HTMLVideoElement();
-          video.src = URL.createObjectURL(file);
-
-          new Array(clipNumber).forEach((_, i) => {
-            video.currentTime = (video.duration / clipNumber) * i;
-            const canvas = new HTMLCanvasElement();
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-            canvas.toBlob((blob) => {
-              processedFiles.push(blob as File);
-              counter += 1;
-            });
-          });
-
-          while (counter < clipNumber) {
-            await new Promise((r) => setTimeout(r, 100));
-          }
-
-          resolve();
-        }
-      });
     });
 
     const requestId = await res.text();
@@ -182,6 +199,15 @@ const Upload: React.FC = () => {
                   variant="outlined"
                   onChange={(e) => setName(e.target.value)}
                 />
+                <TextField
+                  sx={{ ml: 2 }}
+                  id="clip-number"
+                  label="Clip Number"
+                  disabled={!hasVideo}
+                  variant="outlined"
+                  type="number"
+                  onChange={(e) => setClipNumber(Number(e.target.value))}
+                />
               </Grid>
               <Grid item xs={12}>
                 <Autocomplete
@@ -202,7 +228,7 @@ const Upload: React.FC = () => {
                 />
               </Grid>
               <Grid item xs={12}>
-                <Box style={{ display: "flex", justifyContent: "space-between"}}>
+                <Box style={{ display: "flex" }}>
                   <label htmlFor="contained-button-file">
                     <Input
                       accept="image/*,video/*"
@@ -220,8 +246,12 @@ const Upload: React.FC = () => {
                     </Button>
                   </label>
                   <Button
+                    sx={{ ml: 2 }}
                     variant="contained"
                     component="span"
+                    disabled={
+                      files.length === 0 || name === "" || tagList.length === 0
+                    }
                     endIcon={<SendIcon />}
                     onClick={onSubmit}
                   >
