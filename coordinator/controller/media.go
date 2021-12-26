@@ -108,6 +108,12 @@ func sealMedia(c *gin.Context) {
 	return
 }
 
+type imageInRequest struct {
+	Src       string
+	UUID      uuid.UUID
+	CreatedAt time.Time
+}
+
 func getAllImagesByRequest(c *gin.Context) {
 	if c.Param("requestId") == "" {
 		c.String(http.StatusBadRequest, e.RequiredFieldMissing)
@@ -124,7 +130,7 @@ func getAllImagesByRequest(c *gin.Context) {
 
 	mediaNum := len(medias)
 
-	urls := make(chan string, mediaNum)
+	urls := make(chan imageInRequest, mediaNum)
 
 	var presignedError error
 	for _, media := range medias {
@@ -140,7 +146,11 @@ func getAllImagesByRequest(c *gin.Context) {
 				logrus.Error(err)
 				presignedError = err
 			}
-			urls <- presignedURL.String()
+			urls <- imageInRequest{
+				Src:       presignedURL.String(),
+				UUID:      mediaUUID,
+				CreatedAt: media.CreatedAt,
+			}
 		}()
 	}
 
@@ -150,11 +160,11 @@ func getAllImagesByRequest(c *gin.Context) {
 		return
 	}
 
-	var urlStrings []string
+	var imagesInRequest []imageInRequest
 	for i := 0; i < mediaNum; i++ {
-		urlStrings = append(urlStrings, <-urls)
+		imagesInRequest = append(imagesInRequest, <-urls)
 	}
 
-	c.JSON(http.StatusOK, &urlStrings)
+	c.JSON(http.StatusOK, &imagesInRequest)
 	return
 }

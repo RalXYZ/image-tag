@@ -9,10 +9,8 @@ export type project = {
   regionClsList: string[];  // from annotation json
   regionTagList: string[];  // from annotation json
   images: {
-    name: string;  // uuid
-    id: string;
+    id: string;  // uuid
     uploadTime: string;
-
   }[];
   annotations: {
     key: number;
@@ -66,11 +64,11 @@ export function exportCOCO(currentProject: project) {
   let images = currentProject.images.map((r) => {
     let ret: any = {
       lincese: 1,
-      file_name: r.name,
+      file_name: r.id,
       id: r.id,
       date_captured: r.uploadTime,
     };
-    let annotation = currentProject.annotations.filter((o) => o.name === r.name)[0];
+    let annotation = currentProject.annotations.filter((o) => o.name === r.id)[0];
     let pixelSize = annotation.pixelSize
       ret.height = pixelSize.h;
       ret.width = pixelSize.w;
@@ -149,7 +147,7 @@ export function exportCOCO(currentProject: project) {
   document.documentElement.removeChild(a);
 }
 
-export function exportVOC(currentProject) {
+export function exportVOC(currentProject: project) {
   var date = new Date();
 
   let zip = new JSZip();

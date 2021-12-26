@@ -26,7 +26,7 @@ const Detail: React.FC<{
       method: "GET",
     }).then((res) => {
       res.json().then((data) => {
-        setImgUrls(data as string[]);
+        setImgUrls((data).map((d) => d.Src));
       });
     });
   }, []);

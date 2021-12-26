@@ -82,12 +82,12 @@ const Assignment: React.FC = () => {
                       credentials: "include",
                       method: "GET",
                     }).then((res) => {
-                      res.json().then((data: string[]) => {
+                      res.json().then((data) => {
                         const imageList = data.map((item, i) => {
                           return {
                             key: i,
-                            src: item,
-                            name: item.split("?").shift().split("/").pop(),
+                            src: item.Src,
+                            name: item.Src.split("?").shift().split("/").pop(),
                             regions: [],
                           }
                         });
