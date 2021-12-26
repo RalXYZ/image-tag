@@ -8,15 +8,18 @@
     "@emotion/styled": "latest",
     "@mui/icons-material": "^5.2.0",
     "@mui/material": "latest",
+    "file-saver": "^2.0.5",
     "gatsby": "latest",
     "gatsby-plugin-layout": "^3.3.0",
     "gatsby-plugin-react-helmet": "latest",
+    "jszip": "^3.7.1",
     "material-ui-image": "^3.3.2",
     "path-browserify": "^1.0.1",
     "react": "latest",
     "react-dom": "latest",
     "react-helmet": "latest",
-    "react-image-annotate": "^1.8.0"
+    "react-image-annotate": "^1.8.0",
+    "x2js": "^3.4.2"
   },
   "scripts": {
     "develop": "gatsby develop",
