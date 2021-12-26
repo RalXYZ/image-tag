@@ -85,7 +85,7 @@ func login(c *gin.Context) {
 	sessionID, err := uuid.NewV4()
 	if err != nil {
 		log.Error(err)
-		c.String(http.StatusInternalServerError, "")
+		c.String(http.StatusInternalServerError, error.InternalServerError)
 		return
 	}
 
@@ -103,5 +103,18 @@ func login(c *gin.Context) {
 	)
 
 	c.String(http.StatusOK, "")
+	return
+}
+
+func logout(c *gin.Context) {
+	username := c.GetString("username")
+	if err := model.DB.Model(&model.User{}).
+		Where("username = ?", username).
+		Update("session_id", "00000000-0000-0000-0000-000000000000").Error; err != nil {
+		c.String(http.StatusInternalServerError, error.InternalServerError)
+		return
+	}
+
+	c.String(http.StatusResetContent, "")
 	return
 }

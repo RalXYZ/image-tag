@@ -37,7 +37,7 @@ const SignIn: React.FC = () => {
           throw new Error("Failed to login");
         }
         localStorage.setItem("username", JSON.stringify(data.get("username")));
-        navigate("/");
+        window.location.href = "/";
       })
       .catch((error) => console.error(error));
   };

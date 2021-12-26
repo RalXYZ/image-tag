@@ -1,14 +1,16 @@
 import * as React from "react";
+import config from "../config";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
-import Avatar from "@mui/material/Avatar";
 import { navigate } from "gatsby";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
+import { Box } from "@mui/material";
+import ColorfulAvatar from "./colorfulAvatar";
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -39,6 +41,24 @@ const TopBar: React.FC<{
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
 }> = (props) => {
+  const [username, setUsername] = React.useState<string>("?");
+
+  React.useEffect(() => {
+    fetch(`${config.urlHost}/user`, {
+      credentials: "include",
+      method: "GET",
+    })
+      .then((res) => {
+        if (Math.floor(res.status / 100) !== 2) {
+          return;
+        }
+        res.text().then((data) => {
+          console.log(data);
+          setUsername(data);
+        });
+      });
+  }, []);
+
   return (
     <AppBar position="absolute" open={props.open}>
       <Toolbar
@@ -74,13 +94,24 @@ const TopBar: React.FC<{
             <NotificationsIcon />
           </Badge>
         </IconButton>
-        <Avatar onClick={() => navigate("/login")}>
-          {localStorage.getItem("username") == null
-            ? "?"
-            : JSON.parse(localStorage.getItem("username")) == undefined
-            ? "?"
-            : JSON.parse(localStorage.getItem("username"))[0]}
-        </Avatar>
+        <Box
+          onClick={() => {
+            username === "?"
+              ? navigate("/login")
+              : fetch(`${config.urlHost}/user/logout`, {
+                  credentials: "include",
+                  method: "POST",
+                }).then((res) => {
+                  if (Math.floor(res.status / 100) !== 2) {
+                    return;
+                  }
+                  setUsername("?");
+                  navigate("/");
+                });
+          }}
+        >
+          <ColorfulAvatar name={username} />
+        </Box>
       </Toolbar>
     </AppBar>
   );

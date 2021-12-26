@@ -10,4 +10,8 @@ module.exports = {
   siteMetadata: {
     title: 'My page',
   },
+  proxy: {
+    prefix: "/api",
+    url: "http://localhost:3000",
+  },
 };

@@ -3,26 +3,29 @@ package controller
 import "coordinator/middleware"
 
 func addRouter() {
-	user := r.Group("user")
+	api := r.Group("api")
+
+	user := api.Group("user")
 	user.POST("", register)
 	user.POST("login", login)
-	user.GET("", getLoginStatus, middleware.Authenticate())
+	user.POST("logout", middleware.Authenticate(), logout)
+	user.GET("", middleware.Authenticate(), getLoginStatus)
 
-	media := r.Group("media", middleware.Authenticate())
+	media := api.Group("media", middleware.Authenticate())
 	media.GET("", getMediaByUser)
 	media.GET("/:uuid", getMediaById)
 	media.POST("", createMedia)
 	media.PUT("seal", sealMedia)
 	media.GET("request/:requestId", getAllImagesByRequest)
 
-	request := r.Group("request", middleware.Authenticate())
+	request := api.Group("request", middleware.Authenticate())
 	request.POST("", createRequest)
 	request.PUT("seal", sealRequest)
 	request.GET("my", getRequestByUser)
 	request.GET("", getRequest)
 	request.GET("id/:id", getRequestByRequestId)
 
-	assignment := r.Group("assignment", middleware.Authenticate())
+	assignment := api.Group("assignment", middleware.Authenticate())
 	assignment.POST("request/:requestId", createAssignment)
 	assignment.GET("", getAssignmentByUser)
 	assignment.GET("review", getReviewByReviewer)

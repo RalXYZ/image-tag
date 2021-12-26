@@ -15,20 +15,24 @@ func Authenticate() gin.HandlerFunc {
 		str, err := c.Cookie(viper.GetString("token.name"))
 		if err != nil {
 			c.String(http.StatusUnauthorized, "")
+			c.Abort()
 			return
 		}
 		uuidUser, err := uuid.FromString(str)
 		if err != nil {
 			c.String(http.StatusUnauthorized, "")
+			c.Abort()
 			return
 		}
 
 		user := model.User{SessionId: uuidUser}
-		if err = model.DB.First(&user).Error; err == gorm.ErrRecordNotFound {
+		if err = model.DB.Where(&user).First(&user).Error; err == gorm.ErrRecordNotFound {
 			c.String(http.StatusInternalServerError, "")
+			c.Abort()
 			return
 		} else if err != nil {
 			c.String(http.StatusUnauthorized, error.InvalidToken)
+			c.Abort()
 			return
 		}
 
