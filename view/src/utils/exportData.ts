@@ -4,16 +4,16 @@ import FileSaver from "file-saver";
 
 export type project = {
   name: string;
-  regionClsList: string[];  // from annotation json
-  regionTagList: string[];  // from annotation json
+  regionClsList: string[]; // from annotation json
+  regionTagList: string[]; // from annotation json
   images: {
-    id: string;  // uuid
+    id: string; // uuid
     uploadTime: string;
   }[];
   annotations: {
     key: number;
     src: string;
-    name: string;  // uuid
+    name: string; // uuid
     regions: {
       type: string;
       open?: boolean;
@@ -25,7 +25,7 @@ export type project = {
       x2?: number;
       y1?: number;
       y2?: number;
-      points?: number[][];  // polygon
+      points?: number[][]; // polygon
       highlighted: boolean;
       color: string;
       cls: string;
@@ -41,7 +41,7 @@ export type project = {
 };
 
 export function exportCOCO(currentProject: project) {
-  var date = new Date();
+  let date = new Date();
 
   let info = {
     description: currentProject.name,
@@ -66,12 +66,14 @@ export function exportCOCO(currentProject: project) {
       id: r.id,
       date_captured: r.uploadTime,
     };
-    let annotation = currentProject.annotations.filter((o) => o.name === r.id)[0];
-    let pixelSize = annotation.pixelSize
-      ret.height = pixelSize.h;
-      ret.width = pixelSize.w;
-      ret.coco_url = annotation.src;
-      ret.flickr_url = annotation.src;
+    let annotation = currentProject.annotations.filter(
+      (o) => o.name === r.id
+    )[0];
+    let pixelSize = annotation.pixelSize;
+    ret.height = pixelSize.h;
+    ret.width = pixelSize.w;
+    ret.coco_url = annotation.src;
+    ret.flickr_url = annotation.src;
     return ret;
   });
   let categories = currentProject.regionTagList.map((r, i) => {
@@ -146,7 +148,7 @@ export function exportCOCO(currentProject: project) {
 }
 
 export function exportVOC(currentProject: project) {
-  var date = new Date();
+  let date = new Date();
 
   let zip = new JSZip();
   let x2js = new X2JS();
