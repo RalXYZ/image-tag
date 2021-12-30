@@ -1,5 +1,3 @@
-//return URL of JSON file
-
 import X2JS from "x2js";
 import JSZip from "jszip";
 import FileSaver from "file-saver";
@@ -154,12 +152,12 @@ export function exportVOC(currentProject: project) {
   let x2js = new X2JS();
 
   currentProject.images.forEach((r) => {
-    let an = currentProject.annotationMap[r.id];
-    let pixelSize = JSON.parse(an.pixelSize ? an.pixelSize : "{}") || {};
-    let regions = JSON.parse(an.regions ? an.regions : "[]") || [];
+    let an = currentProject.annotations.filter((o) => o.name === r.id)[0];
+    let pixelSize = an.pixelSize;
+    let regions = an.regions;
     let annotation = {
       folder: currentProject.name,
-      filename: r.name,
+      filename: r.id,
       size: { width: pixelSize.w, height: pixelSize.h, depth: 3 },
       segmented: 0,
       object: [],
@@ -215,7 +213,7 @@ export function exportVOC(currentProject: project) {
     });
     let xmlAsStr = x2js.js2xml({ annotation: annotation });
     let blob = new Blob([xmlAsStr], { type: "application/xml" });
-    zip.file(r.name.substring(0, r.name.lastIndexOf(".")) + ".xml", blob);
+    zip.file(r.id + ".xml", blob);
   });
   zip.generateAsync({ type: "blob" }).then((content) => {
     FileSaver(

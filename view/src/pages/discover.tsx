@@ -3,6 +3,7 @@ import config from "../config";
 import { useState, useEffect } from "react";
 import type { GenericListProp } from "../components/genericList";
 import GenericList from "../components/genericList";
+import { navigate } from "gatsby";
 
 const Discover: React.FC = () => {
   const [listProps, setListProps] = useState<GenericListProp[]>([]);
@@ -22,17 +23,9 @@ const Discover: React.FC = () => {
     <GenericList
       data={listProps}
       skeleton={{
-        buttonName: "Claim",
-        buttonCallback: (id: string) => {
-          fetch(`${config.urlHost}/assignment/request/${id}`, {
-            credentials: "include",
-            method: "POST",
-          }).then((res) => {
-            res.json().then((data) => {
-              setListProps(data as GenericListProp[]);
-            });
-          });
-        },
+        buttonName: "View",
+        buttonCallback: (id: string) =>
+          navigate("/detail", { state: { requestId: id } }),
       }}
     />
   );
