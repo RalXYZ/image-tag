@@ -34,8 +34,8 @@ export type project = {
       tags: string[];
     }[];
     pixelSize: {
-      w: number;
-      h: number;
+      w?: number;
+      h?: number;
     };
   }[];
 };
@@ -49,7 +49,7 @@ export function exportCOCO(currentProject: project) {
     version: "1.0",
     year: 2021,
     contributor: "RalXYZ",
-    date_created: `${date.getFullYear()}/${date.getMonth()}/${date.getDay}`,
+    date_created: `${date.getFullYear()}/${date.getMonth()}/${date.getDay()}`,
   };
   let licenses = [
     {

@@ -31,7 +31,7 @@ const SignIn: React.FC = () => {
       .then((response) => {
         if (response.status !== 200) {
           response.text().then((text) => {
-            setError(text);
+            setError("wrong username or password");
           });
           localStorage.removeItem("username")
           throw new Error("Failed to login");

@@ -76,7 +76,7 @@ const Assignment: React.FC = () => {
               <TableCell align="center">
                 <Button
                   variant="contained"
-                  disabled={row.Status !== AssignmentStatusEnum.CLAIMED}
+                  disabled={row.Status !== AssignmentStatusEnum.CLAIMED && row.Status !== AssignmentStatusEnum.REJECTED}
                   onClick={() => {
                     fetch(`${config.urlHost}/media/request/${row.Request.ID}`, {
                       credentials: "include",

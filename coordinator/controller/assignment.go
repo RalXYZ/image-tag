@@ -146,7 +146,7 @@ func createAnnotation(c *gin.Context) {
 			return
 		}
 
-		if assignment.Status != uint64(model.CLAIMED) {
+		if assignment.Status != uint64(model.CLAIMED) && assignment.Status != uint64(model.REJECTED) {
 			c.String(http.StatusBadRequest, e.InvalidRequestBecauseOfCurrentState)
 			return
 		}

@@ -51,7 +51,7 @@ export default function Register() {
       body: data,
     })
       .then((response) => {
-        if (response.status >> 2 === 200) {
+        if (Math.round(response.status / 100) === 2) {
           navigate("/login");
         }
       })

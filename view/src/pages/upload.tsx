@@ -17,6 +17,7 @@ import SendIcon from "@mui/icons-material/Send";
 import Autocomplete from "@mui/material/Autocomplete";
 import config from "../config";
 import Box from "@mui/material/Box";
+import { navigate } from "gatsby";
 
 const Input = styled("input")({
   display: "none",
@@ -184,6 +185,8 @@ const Upload: React.FC = () => {
       method: "PUT",
       body: sealRequestReqFormData,
     });
+
+    navigate("/request");
   };
 
   return (
@@ -266,7 +269,6 @@ const Upload: React.FC = () => {
           </Paper>
         </Grid>
       </Grid>
-      <Copyright sx={{ pt: 4 }} />
     </Container>
   );
 };

@@ -1,5 +1,6 @@
 import * as React from "react";
 import config from "../config";
+import { navigate } from "gatsby";
 import { useState, useEffect } from "react";
 import Image from "material-ui-image";
 import Grid from "@mui/material/Grid";
@@ -72,6 +73,7 @@ const Detail: React.FC<{
             method: "POST",
           }).then((res) => {
             console.log(res);
+            navigate("/assignment");
           });
         }}
       >
