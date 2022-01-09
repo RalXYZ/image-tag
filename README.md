@@ -8,3 +8,5 @@
 ![MariaDB](https://img.shields.io/badge/-MariaDB-003545?logo=mariadb&logoColor=fff)  
 
 **Image Tag** is a website for image data annotation for machine learning. It is the final project of *B/S System Software Design* course.   
+
+![detials](https://raw.githubusercontent.com/RalXYZ/repo-pictures/main/image-tag/details.png)

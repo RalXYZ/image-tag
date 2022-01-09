@@ -1,38 +1,46 @@
-# Gatsby example
+# 图像标注网站前端
 
-## How to use
+## 技术选型
 
-Download the example [or clone the repo](https://github.com/mui-org/material-ui):
+React + TypeScript + Gatsby + MUI
 
-<!-- #default-branch-switch -->
+## 运行与部署
 
-```sh
-curl https://codeload.github.com/mui-org/material-ui/tar.gz/master | tar -xz --strip=2  material-ui-master/examples/gatsby
-cd gatsby
-```
+### 前端运行
 
-Install it and run:
+请直接在前端项目的根目录下执行：
 
-```sh
+```shell
 npm install
 npm run develop
 ```
 
-or:
+### 部署到服务器
 
-<!-- #default-branch-switch -->
+除了前端运行部分，其余部分的配置都相同。而对于前端而言，如果您需要将其部署在服务器上，您需要在前端项目的根目录下执行：
 
-[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/mui-org/material-ui/tree/master/examples/gatsby)
+```shell
+npm install
+gatsby build  # 把 nodjs 项目编译为静态文件
+```
 
-## The idea behind the example
+您会发现，前端目录下多出了一个 `public` 目录。
 
-The project uses [Gatsby](https://github.com/gatsbyjs/gatsby), which is a static site generator for React.
-It includes `@mui/material` and its peer dependencies, including `emotion`, the default style engine in MUI v5.
-If you prefer, you can [use styled-components instead](https://mui.com/guides/interoperability/#styled-components).
+随后，您需要配置反向代理。以下我将展示一个能实现此需求的 Nginx 配置文件：
 
-## What's next?
+```nginx
+server {
+    root /path/to/front-end/static/files;  # 请在这里填写刚刚前端编译出的静态文件所在的目录
 
-<!-- #default-branch-switch -->
+    server_name example.com;  # 请在这里换成您的域名；需要保证域名解析到了这台服务器上
 
-You now have a working example project.
-You can head back to the documentation, continuing browsing it from the [templates](https://mui.com/getting-started/templates/) section.
+    location /api {
+        proxy_pass http://localhost:1323/api;  # 代理后端流量，无需更改此行
+    }
+
+    location / {
+        try_files $uri $uri/ =404;  # 暴露前端静态文件，无需更改此行
+    }
+
+}
+```
